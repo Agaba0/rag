@@ -52,7 +52,14 @@ const Flashcard = () => {
   return (
     <div className="container mx-auto">
       <h1 className="text-3xl font-bold mb-6">Flashcards</h1>
-
+      <div className="bg-blue-100 p-4 rounded-lg mb-6">
+        <p className="text-lg">
+        Improve your learning with flashcards created from your uploaded documents.
+        </p>
+        <p className="text-lg font-semibold mt-2">
+          Note: The more flashcard you study and master will determine how well you will do in the quiz section
+        </p>
+      </div>
       <div className="bg-white p-6 rounded-lg shadow-lg">
         <button
           onClick={handleStart}

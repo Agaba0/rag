@@ -1,79 +1,7 @@
 import { useContext, useState } from "react";
 import { FileContext } from "./fileContext";
 import { generateQuestion } from "./ai";
-
-const QuizQuestion = ({ question, index, userAnswer, onAnswerChange }) => {
-  const renderInputField = () => {
-    const { type, options } = question;
-
-    switch (type) {
-      case "objective": // Single choice
-        return options.map((option, i) => (
-          <div key={i} className="mb-1">
-            <label>
-              <input
-                type="radio"
-                name={`question-${index}`}
-                value={option}
-                checked={userAnswer === option}
-                onChange={() => onAnswerChange(index, option)}
-                className="mr-2"
-              />
-              {option}
-            </label>
-          </div>
-        ));
-      case "multiple": // Multiple choice
-        return options.map((option, i) => (
-          <div key={i} className="mb-1">
-            <label>
-              <input
-                type="checkbox"
-                name={`question-${index}`}
-                value={option}
-                checked={
-                  Array.isArray(userAnswer) && userAnswer.includes(option)
-                }
-                onChange={(e) => {
-                  const updatedAnswers = Array.isArray(userAnswer)
-                    ? [...userAnswer]
-                    : [];
-                  if (e.target.checked) {
-                    updatedAnswers.push(option);
-                  } else {
-                    const optionIndex = updatedAnswers.indexOf(option);
-                    if (optionIndex > -1) {
-                      updatedAnswers.splice(optionIndex, 1);
-                    }
-                  }
-                  onAnswerChange(index, updatedAnswers);
-                }}
-                className="mr-2"
-              />
-              {option}
-            </label>
-          </div>
-        ));
-      case "fill-in-the-blank": // Text input
-      default:
-        return (
-          <input
-            type="text"
-            value={userAnswer || ""}
-            onChange={(e) => onAnswerChange(index, e.target.value)}
-            className="border rounded p-2 w-full"
-          />
-        );
-    }
-  };
-
-  return (
-    <div className="mb-4">
-      <p>{question.question}</p>
-      {renderInputField()}
-    </div>
-  );
-};
+import QuizQuestion from "./quizeQuestion";
 
 const Quizzes = () => {
   const { fileContent } = useContext(FileContext);
@@ -94,10 +22,9 @@ const Quizzes = () => {
     try {
       const prompt = `Generate quiz questions based on the following content:\n\n${fileContent}. 
       Format: just go straight to the questions without any introduction, it should be objectives questions
-      schema: what is a noun? a) name of person, animal, place or things. b) nothing. c) all of the above.`;
+      example: 1) what is a noun? a) name of person, animal, place or things. b) nothing. c) all of the above. answer:  name of person, animal, place or things.  2) what is a verb? a) an action  b) Habibu. c) Her. animal, place or things., answer: an action , etc do not add ** in either the question or answer`;
       const generatedQuiz = await generateQuestion(prompt);
       const parsedQuiz = parseQuiz(generatedQuiz);
-      console.log(parsedQuiz);
       setQuizQuestions(parsedQuiz);
       setUserAnswers({});
       setScore(null);
@@ -113,22 +40,25 @@ const Quizzes = () => {
     const questions = [];
     let currentQuestion = null;
     let currentOptions = [];
+    let currentAnswer = null;
 
     quizText.split("\n").forEach((line) => {
       line = line.trim();
       if (!line) return;
 
-      const questionMatch = line.match(/^\d+\.\s*(.*\?)$/);
+      const questionMatch = line.match(/^\d+\)\s*(.*\?)$/);
       if (questionMatch) {
         if (currentQuestion) {
           questions.push({
             type: "objective",
             question: currentQuestion,
             options: currentOptions,
+            answer: currentAnswer,
           });
         }
         currentQuestion = questionMatch[1].trim();
         currentOptions = [];
+        currentAnswer = null; 
         return;
       }
 
@@ -137,6 +67,11 @@ const Quizzes = () => {
         currentOptions.push(optionMatch[1].trim());
         return;
       }
+
+      const answerMatch = line.match(/^\s*Answer:\s*(.*)$/);
+      if (answerMatch) {
+        currentAnswer = answerMatch[1].trim(); 
+      }
     });
 
     if (currentQuestion) {
@@ -144,42 +79,62 @@ const Quizzes = () => {
         type: "objective",
         question: currentQuestion,
         options: currentOptions,
-        answer: answer,
+        answer: currentAnswer, 
       });
     }
 
     return questions;
   };
 
-  const handleAnswerChange = (index, answer) => {
-    setUserAnswers((prevAnswers) => ({ ...prevAnswers, [index]: answer }));
+  const normalizeAnswer = (answer) => {
+    return answer.replace(/^[a-z]\)\s*/i, "").trim();
   };
 
   const handleSubmit = () => {
     let totalScore = 0;
-    quizQuestions.forEach((q, index) => {
-      const correctAnswer = Array.isArray(q.answer) ? q.answer : [q.answer];
-      const userSelection = Array.isArray(userAnswers[index])
-        ? userAnswers[index]
-        : [];
-      if (
-        userSelection.length === correctAnswer.length &&
-        correctAnswer.every((ans) => userSelection.includes(ans))
-      ) {
-        totalScore += 10;
-      } else if (userAnswers[index]?.trim() === q.answer) {
-        totalScore += 10;
+    const results = quizQuestions.map((q, index) => {
+      const correctAnswer = normalizeAnswer(q.answer);
+      const userSelection = userAnswers[index]
+        ? normalizeAnswer(userAnswers[index])
+        : "";
+
+      if (userSelection === correctAnswer) {
+        totalScore += 5; 
+        return {
+          question: q.question,
+          userAnswer: userSelection,
+          correct: true,
+        };
+      } else {
+        return {
+          question: q.question,
+          userAnswer: userSelection || "Not answered",
+          correct: false,
+          correctAnswer,
+        };
       }
     });
+
     setScore(totalScore);
+  };
+
+  const handleAnswerChange = (index, answer) => {
+    setUserAnswers((prevAnswers) => ({ ...prevAnswers, [index]: answer }));
   };
 
   return (
     <div className="container mx-auto">
       <h1 className="text-3xl font-bold mb-6">Quizzes</h1>
+      <div className="bg-blue-100 p-4 rounded-lg mb-6">
+        <p className="text-lg">
+        Lets see how much knowledge you have gained so far
+        </p>
+        <p className="text-lg font-semibold mt-2">
+Goodluck
+        </p>
+      </div>
       <div className="bg-white p-6 rounded-lg shadow-lg">
         <h2 className="text-xl font-semibold">Quiz</h2>
-        <p className="mt-2">Test your knowledge on the uploaded document.</p>
         <button
           onClick={handleStartQuiz}
           className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300"
@@ -197,9 +152,12 @@ const Quizzes = () => {
                 question={q}
                 index={index}
                 userAnswer={userAnswers[index]}
+                correctAnswer={q.answer}
+                submitted={score !== null}
                 onAnswerChange={handleAnswerChange}
               />
             ))}
+
             <button
               onClick={handleSubmit}
               className="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-300"
@@ -209,30 +167,8 @@ const Quizzes = () => {
             {score !== null && (
               <div className="mt-4">
                 <h3 className="text-lg font-bold">
-                  Your Score: {score} / {quizQuestions.length * 10}
+                  Your Score: {score} / {quizQuestions.length * 5}{" "}
                 </h3>
-                <h4 className="font-semibold">Review Your Answers:</h4>
-                {quizQuestions.map((q, index) => (
-                  <div key={index} className="mb-2">
-                    <p>
-                      <strong>Question:</strong> {q.question}
-                    </p>
-                    <p>
-                      <strong>Your Answer:</strong>{" "}
-                      {userAnswers[index] || "Not answered"}
-                    </p>
-                    <p
-                      className={`font-semibold ${
-                        userAnswers[index] === q.answer
-                          ? "text-green-600"
-                          : "text-red-600"
-                      }`}
-                    >
-                      <strong>Correct Answer:</strong>{" "}
-                      {Array.isArray(q.answer) ? q.answer.join(", ") : q.answer}
-                    </p>
-                  </div>
-                ))}
               </div>
             )}
           </div>

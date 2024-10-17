@@ -11,7 +11,6 @@ const generationConfig = {
   responseMimeType: "text/plain",
 };
 
-// Function to generate flashcards and quizzes
 export const genarateFlashCard = async (prompt) => {
   const model = genAI.getGenerativeModel({
     model: "gemini-1.5-flash",
@@ -25,9 +24,8 @@ export const genarateFlashCard = async (prompt) => {
 
   try {
     const result = await chatSession.sendMessage(prompt);
-    const responseText = await result.response.text(); // Get the generated text from the AI
+    const responseText = await result.response.text();
 
-    // Parse the text into flashcards
     const flashcards = parseFlashcards(responseText);
     return flashcards;
   } catch (error) {
@@ -38,11 +36,11 @@ export const genarateFlashCard = async (prompt) => {
 
 const parseFlashcards = (text) => {
   const flashcards = [];
-  const questionAnswerPairs = text.split('**Flashcard'); // Split by Flashcard markers
+  const questionAnswerPairs = text.split('**Flashcard'); 
 
   questionAnswerPairs.forEach((pair) => {
-    const questionMatch = pair.match(/\*\*Question:\*\* (.+)/); // Extract the question
-    const answerMatch = pair.match(/\*\*Answer:\*\* (.+)/); // Extract the answer
+    const questionMatch = pair.match(/\*\*Question:\*\* (.+)/); 
+    const answerMatch = pair.match(/\*\*Answer:\*\* (.+)/);
 
     if (questionMatch && answerMatch) {
       flashcards.push({

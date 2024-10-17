@@ -5,20 +5,17 @@ import { useNavigate } from 'react-router-dom';
 
 const Recommendation = () => {
   const { fileContent } = useContext(FileContext);
-  const [quizProgress, setQuizProgress] = useState(0); // State for quiz progress
-  const [flashcardProgress, setFlashcardProgress] = useState(0); // State for flashcard progress
-  const [recommendations, setRecommendations] = useState(''); // State for AI recommendations
-  const [hasRequested, setHasRequested] = useState(false); // State to track if the request has been made
+  const [quizProgress, setQuizProgress] = useState(0); 
+  const [flashcardProgress, setFlashcardProgress] = useState(0); 
+  const [recommendations, setRecommendations] = useState(''); 
+  const [hasRequested, setHasRequested] = useState(false); 
   const navigate = useNavigate();
 
-  // Simulate progress for demo purposes
   useEffect(() => {
-    // Update quiz progress over time
     const quizProgressInterval = setInterval(() => {
       setQuizProgress((prev) => (prev < 100 ? prev + 10 : 100));
     }, 1000);
 
-    // Update flashcard progress over time
     const flashcardProgressInterval = setInterval(() => {
       setFlashcardProgress((prev) => (prev < 100 ? prev + 5 : 100));
     }, 1500);
@@ -29,7 +26,6 @@ const Recommendation = () => {
     };
   }, []);
 
-  // Generate recommendations based on the uploaded document content
   useEffect(() => {
     const fetchRecommendations = async () => {
       if (!fileContent) {
@@ -38,13 +34,12 @@ const Recommendation = () => {
         return;
       }
 
-      // Make sure the request is made only once
       if (!hasRequested && fileContent) {
         const prompt = `Based on the following content, suggest related topics for further learning:\n\n${fileContent}`;
         try {
           const recommendations = await generateRecommendation(prompt);
           setRecommendations(recommendations);
-          setHasRequested(true); // Mark the request as completed
+          setHasRequested(true); 
         } catch (error) {
           console.error('Error generating recommendations:', error);
         }
@@ -69,7 +64,14 @@ const Recommendation = () => {
   return (
     <div className="container mx-auto">
       <h1 className="text-3xl font-bold mb-6">Recommendations</h1>
-      
+      <div className="bg-blue-100 p-4 rounded-lg mb-6">
+        <p className="text-lg">
+        See how well you did
+        </p>
+        <p className="text-lg font-semibold mt-2">
+          Note: The AI has recommended some topic you should look into a gain mastery on the file uploaded 
+        </p>
+      </div>
       <div className="bg-white p-6 rounded-lg shadow-lg mb-6">
         <h2 className="text-xl font-bold mb-4">Progress Overview</h2>
         <div className="mb-4">

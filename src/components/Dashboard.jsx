@@ -13,7 +13,7 @@ const Dashboard = () => {
   const handleFileUpload = async (event) => {
     const uploadedFile = event.target.files[0];
     setLoading(true);
-    setGeneratedContent(''); // Clear previously generated content
+    setGeneratedContent(''); 
 
     try {
       if (
@@ -22,15 +22,15 @@ const Dashboard = () => {
       ) {
         const csvText = await extractCsvText(uploadedFile);
         setFileContent(csvText);
-        await generateContent(csvText); // Send CSV content to the AI
-        setGeneratedContent(csvText); // Preview for CSV
+        await generateContent(csvText);
+        setGeneratedContent(csvText);
       } else if (
         uploadedFile.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
       ) {
         const text = await extractDocxText(uploadedFile);
         setFileContent(text);
-        await generateContent(text); // Send DOCX content to the AI
-        setGeneratedContent(text); // Preview for DOCX
+        await generateContent(text);
+        setGeneratedContent(text); 
       } else {
         alert('Unsupported file format. Please upload a DOCX or CSV file.');
       }
@@ -65,9 +65,9 @@ const Dashboard = () => {
 
   const generateContent = async (text) => {
     try {
-      const prompt = `summarize and itemize the key points\n\n${text}`;
+      const prompt = `summarize and itemize the key/ bullet point points\n\n${text}`;
       const generated = await generateFlashcardsAndQuizzes(prompt);
-      setGeneratedContent(generated); // Only set generated content for CSV and DOCX
+      setGeneratedContent(generated); 
     } catch (error) {
       console.error('Error generating content:', error);
     }
@@ -77,7 +77,6 @@ const Dashboard = () => {
     <div className="container mx-auto">
       <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
 
-      {/* Information about file upload */}
       <div className="bg-blue-100 p-4 rounded-lg mb-6">
         <p className="text-lg">
         Upload the document you wish to learn about. We are here to guide you towards mastery within 30 to 60 minutes
