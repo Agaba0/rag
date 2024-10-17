@@ -62,7 +62,6 @@ const Flashcard = () => {
         </button>
 
         {flashcards.length > 0 && (
-          console.log('dddd'),
           <div className="mt-6 text-center">
             <div
               className={`relative flip-card w-1/2 h-64 mx-auto cursor-pointer ${flipped ? 'flipped' : ''}`}
