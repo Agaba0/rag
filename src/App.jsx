@@ -3,6 +3,7 @@ import Dashboard from './components/Dashboard';
 import Quizzes from './components/Quizzes';
 import Flashcards from './components/Flashcards';
 import { FileProvider } from './components/fileContext';
+import Recommendation from './components/Reccommedation';
 
 const App = () => {
   return (
@@ -20,6 +21,9 @@ const App = () => {
               <li className=' border-2 p-2 rounded-md'>
                 <Link to="/quizzes" className="hover:underline">Quizzes</Link>
               </li>
+              <li className=' border-2 p-2 rounded-md'>
+                <Link to="/recommend" className="hover:underline">Recommendation</Link>
+              </li>
             </ul>
           </nav>
 
@@ -28,6 +32,7 @@ const App = () => {
               <Route path="/" element={<Dashboard />} />
               <Route path="/quizzes" element={<Quizzes />} />
               <Route path="/flashcards" element={<Flashcards />} />
+              <Route path="/recommend" element={<Recommendation />} />
             </Routes>
           </main>
         </div>

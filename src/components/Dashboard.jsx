@@ -137,7 +137,7 @@ const Dashboard = () => {
           <p className="text-gray-700 mb-4">
             Get tailored recommendations to optimize your study sessions and improve learning outcomes.
           </p>
-          <Link to="/" className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
+          <Link to="/recommend" className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
             Get Recommendations
           </Link>
         </div>

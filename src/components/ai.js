@@ -95,3 +95,23 @@ export const generateQuestion = async (prompt) => {
     throw error; 
   }
 };
+
+export const generateRecommendation = async (prompt) => {
+  const model = genAI.getGenerativeModel({
+    model: "gemini-1.5-flash",
+    systemInstruction: "recommend 5 topics related to the uploaded file, just the the topic no elaborations and without introduction",
+  });
+
+  const chatSession = model.startChat({
+    generationConfig,
+    history: [],
+  });
+
+  try {
+    const result = await chatSession.sendMessage(prompt);
+    return result.response.text();
+  } catch (error) {
+    console.error("Error generating content:", error);
+    throw error; 
+  }
+};
