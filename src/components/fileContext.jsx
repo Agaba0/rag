@@ -1,4 +1,3 @@
-// FileContext.jsx
 import { createContext, useState } from 'react';
 
 export const FileContext = createContext();

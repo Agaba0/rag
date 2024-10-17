@@ -1,4 +1,3 @@
-//dashboard.jsx
 import { useState, useContext } from 'react';
 import Papa from 'papaparse';
 import mammoth from 'mammoth';

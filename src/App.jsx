@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import Dashboard from './components/dashboard';
+import Dashboard from './components/Dashboard';
 import Quizzes from './components/Quizzes';
 import Flashcards from './components/Flashcards';
 import { FileProvider } from './components/fileContext';
