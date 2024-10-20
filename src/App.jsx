@@ -1,28 +1,39 @@
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import Dashboard from './components/Dashboard';
-import Quizzes from './components/Quizzes';
-import Flashcards from './components/Flashcards';
-import { FileProvider } from './components/fileContext';
-import Recommendation from './components/Reccommedation';
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import Dashboard from "./components/Dashboard";
+import Quizzes from "./components/Quizzes";
+import Flashcards from "./components/Flashcards";
+import { FileProvider } from "./components/fileContext";
+import Recommendation from "./components/Reccommedation";
+import MarqueeText from "./components/Marquee";
+// import logo from "/wootlab.png"
 
 const App = () => {
   return (
     <FileProvider>
       <Router>
-        <div className="min-h-screen bg-gray-100">
+        <div className="min-h-screen bg-gray-100 relative">
           <nav className="bg-blue-500 p-4 flex justify-center">
+          {/* <img src={logo} alt="logo" className="w-24"/> */}
             <ul className="flex space-x-4 text-white">
-              <li className=' border-2 p-2 rounded-md'>
-                <Link to="/" className="hover:underline">Dashboard</Link>
+              <li className="border-2 p-2 rounded-md">
+                <Link to="/" className="hover:underline">
+                  Dashboard
+                </Link>
               </li>
-              <li className=' border-2 p-2 rounded-md'>
-                <Link to="/flashcards" className="hover:underline">Flashcards</Link>
+              <li className="border-2 p-2 rounded-md">
+                <Link to="/flashcards" className="hover:underline">
+                  Flashcards
+                </Link>
               </li>
-              <li className=' border-2 p-2 rounded-md'>
-                <Link to="/quizzes" className="hover:underline">Quizzes</Link>
+              <li className="border-2 p-2 rounded-md">
+                <Link to="/quizzes" className="hover:underline">
+                  Quizzes
+                </Link>
               </li>
-              <li className=' border-2 p-2 rounded-md'>
-                <Link to="/recommend" className="hover:underline">Recommendation</Link>
+              <li className="border-2 p-2 rounded-md">
+                <Link to="/recommend" className="hover:underline">
+                  Recommendation
+                </Link>
               </li>
             </ul>
           </nav>
@@ -35,6 +46,7 @@ const App = () => {
               <Route path="/recommend" element={<Recommendation />} />
             </Routes>
           </main>
+          <MarqueeText />
         </div>
       </Router>
     </FileProvider>
